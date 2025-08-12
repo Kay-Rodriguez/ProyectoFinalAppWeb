@@ -156,7 +156,6 @@ const login = async (req, res) => {
     })
 }
 
-
 const perfil = (req,res) =>{
     const {token,confirmEmail,createdAt,updatedAt,__v,...datosPerfil} = req.veterinarioBDD
     res.status(200).json(datosPerfil)

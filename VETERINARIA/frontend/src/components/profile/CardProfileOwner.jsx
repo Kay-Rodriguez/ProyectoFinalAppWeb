@@ -1,5 +1,4 @@
 import storeProfile from "../../context/storeProfile"
-
 export const CardProfileOwner = () => {
 
     const {user} = storeProfile()

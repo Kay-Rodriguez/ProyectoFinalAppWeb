@@ -1,7 +1,10 @@
 // controllers/authGoogle_controller.js
 import { OAuth2Client } from 'google-auth-library'
+import Administrador from '../models/Administrador.js'
+import bcrypt from 'bcryptjs'
+import { crearTokenJWT } from '../middlewares/JWT.js'
 
-const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID) // <-- variable de backend
+const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID)
 
 export const googleLogin = async (req, res) => {
   try {
@@ -12,14 +15,31 @@ export const googleLogin = async (req, res) => {
       idToken: token,
       audience: process.env.GOOGLE_CLIENT_ID
     })
-
     const payload = ticket.getPayload()
+    const { email, name, picture } = payload
 
-    // Aquí puedes crear/buscar el usuario y emitir tu propio JWT si quieres
+    // 1) Busca o crea admin por email
+    let user = await Administrador.findOne({ email })
+    if (!user) {
+      const [nombre, ...rest] = (name || '').split(' ')
+      const hash = await bcrypt.hash(crypto.randomUUID(), 10)
+      user = await Administrador.create({
+        nombre: nombre || 'Usuario',
+        apellido: rest.join(' ') || '',
+        email,
+        password: hash,
+        confirmEmail: true
+      })
+    }
+
+    // 2) Emite JWT con su rol
+    const jwt = crearTokenJWT(user._id, user.rol)
+
     res.json({
-      message: 'Login con Google exitoso',
-      user: { name: payload.name, email: payload.email, picture: payload.picture }
-      // token: TU_JWT
+      msg: 'Login con Google exitoso',
+      token: jwt,
+      rol: user.rol,
+      user: { name, email, picture }
     })
   } catch (error) {
     console.error(error)

@@ -21,7 +21,7 @@ const storeProfile = create((set) => ({
                 const storedUser = JSON.parse(localStorage.getItem("auth-token"));
                 const endpoint = storedUser.state.rol ==="administrador"
                     ? "perfil"
-                    : "agenteASC/perfil"
+                    : "agenteSAC/perfil"
                 const url = `${import.meta.env.VITE_BACKEND_URL}/${endpoint}`;
 
                 const respuesta = await axios.get(url, getAuthHeaders())

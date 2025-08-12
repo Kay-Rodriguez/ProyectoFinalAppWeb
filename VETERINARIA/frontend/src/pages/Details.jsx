@@ -16,7 +16,7 @@ const Details = () => {
     const { modal, toggleModal } = storeTreatments()   
 
     const listPatient = async () => {
-        const url = `${import.meta.env.VITE_BACKEND_URL}/administrador /${id}`
+        const url = `${import.meta.env.VITE_BACKEND_URL}/agenteSAC/${id}`
         const storedUser = JSON.parse(localStorage.getItem("auth-token"))
         const headers= {
                 "Content-Type": "application/json",
@@ -25,8 +25,8 @@ const Details = () => {
         const response = await fetchDataBackend(url, null, "GET", headers)
         console.log(response);
         
-        setPatient(response.administrador)
-        setTreatments(response.agenteSAC)
+        setPatient(response?.agente ||{})
+        setTreatments(response?.afiliado|| [])
     }
 
     const formatDate = (date) => {

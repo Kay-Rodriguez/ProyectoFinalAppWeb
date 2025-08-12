@@ -5,7 +5,6 @@ import { useForm } from "react-hook-form"
 import {generateAvatar,convertBlobToBase64} from "../../helpers/consultarIA"
 import { toast, ToastContainer } from "react-toastify"
 
-
 export const Form = ({patient}) => {
 
     const [avatar, setAvatar] = useState({
@@ -31,12 +30,12 @@ export const Form = ({patient}) => {
             // data:image/png;base64,iVBORw0KGgjbjgfyvh
             const base64Image = await convertBlobToBase64(blob)           
             setAvatar(prev => ({ ...prev, image: imageUrl, loading: false }))
-            setValue("avatarMascotaIA", base64Image)
+            setValue("avatarContratoIA", base64Image)
         }
         else {
             toast.error("Error al generar la imagen, vuelve a intentarlo dentro de 1 minuto");
             setAvatar(prev => ({ ...prev, image: "https://cdn-icons-png.flaticon.com/512/2138/2138440.png", loading: false }))
-            setValue("avatarMascotaIA", avatar.image)
+            setValue("avatarContratoIA", avatar.image)
         }
     }
 
@@ -91,7 +90,7 @@ export const Form = ({patient}) => {
                 celularPropietario: patient?.celularPropietario,
                 nombreContrato: patient?.nombreContrato,
                 tipoContrato: patient?.tipoContrato,
-                fechaDeInicioContraro: new Date(patient?.fechaDeInicioContraro).toLocaleDateString('en-CA', {timeZone: 'UTC'}),
+                fechaDeInicioContrato: new Date(patient?.fechaDeInicioContrato).toLocaleDateString('en-CA', {timeZone: 'UTC'}),
                 especificacionesContrato: patient?.especificacionesContrato
             })
         }
@@ -252,14 +251,15 @@ export const Form = ({patient}) => {
                     <select
                         id='prioridad'
                         className='block w-full rounded-md border border-gray-300 py-1 px-2 text-gray-500 mb-5'
-                        {...register("tipoContato", { required: "El tipo de la mascota es obligatorio" })}
+                        {...register("tipoContrato", { required: "El tipo de Contrato es obligatorio" })}
                     >
                         <option value="">--- Seleccionar ---</option>
-                        <option value="gato">Gato</option>
-                        <option value="perro">Perro</option>
+                        <option value="Basico">Básico</option>
+                        <option value="Premium">Premium</option>
+                        <option value="Corporativo">Corporativo</option>
                         <option value="otro">Otro</option>
                     </select>
-                    {errors.tipoMascota && <p className="text-red-800">{errors.tipoMascota.message}</p>}
+                    {errors.tipoContrato && <p className="text-red-800">{errors.tipoContrato.message}</p>}
                 </div>
 
                 {/* Fecha de Inicio Contrato*/}
@@ -268,9 +268,9 @@ export const Form = ({patient}) => {
                     <input
                         type="date"
                         className="block w-full rounded-md border border-gray-300 py-1 px-2 text-gray-500 mb-5"
-                        {...register("fechaDeInicioContrato", { required: "La fecha de inico de contrado es obligatorio" })}
+                        {...register("fechaDeInicioContrato", { required: "La fecha de inico de contrato es obligatorio" })}
                     />
-                    {errors.fechaDeInicioContraro && <p className="text-red-800">{errors.fechaDeInicioContraro.message}</p>}
+                    {errors.fechaDeInicioContrato && <p className="text-red-800">{errors.fechaDeInicioContrato.message}</p>}
                 </div>
 
                 {/* Especificaciones */}

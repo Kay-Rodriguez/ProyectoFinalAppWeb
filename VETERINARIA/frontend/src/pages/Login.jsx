@@ -19,7 +19,7 @@ const Login = () => {
             const url = data.password.includes("VIDA")
                 ? `${import.meta.env.VITE_BACKEND_URL}/agenteSAC/login`
                 : `${import.meta.env.VITE_BACKEND_URL}/login`;
-            const response = await fetchDataBackend(url, data, 'POST', null);
+            const response = await fetchDataBackend(url, data, 'POST', {});
             if (!response) throw new Error('No hay respuesta del servidor');
             setToken(response?.token);
             setRol(response?.rol);
@@ -67,12 +67,12 @@ const Login = () => {
             {/* Contenedor de formulario */}
             <div className="w-full sm:w-1/2 h-screen bg-white flex justify-center items-center">
                 <div className="md:w-4/5 sm:w-full">
-                    <h1 className="text-3xl font-semibold mb-2 text-center uppercase text-gray-500">Bienvenido(a) de nuevo</h1>
+                    <h1 className="text-3xl font-semibold mb-2 text-center uppercase text-blue-900">Bienvenido(a) de nuevo</h1>
                     <small className="text-gray-400 block my-4 text-sm">Por favor ingresa tus datos</small>
 
                     <form onSubmit={handleSubmit(loginUser)}>
 
-                        {/* Correo electrónico */}
+                       {/* Correo electrónico */}
                         <div className="mb-3">
                             <label className="mb-2 block text-sm font-semibold">Correo electrónico</label>
                             <input type="email" placeholder="Ingresa tu correo" className="block w-full rounded-md border border-gray-300 focus:border-purple-700 focus:outline-none focus:ring-1 focus:ring-purple-700 py-1 px-2 text-gray-500" 
@@ -112,8 +112,8 @@ const Login = () => {
 
                         {/* Botón de iniciar sesión */}
                         <div className="my-4">
-                            <button className="py-2 w-full block text-center bg-blue-500 text-slate-300 border rounded-xl 
-                            hover:scale-100 duration-300 hover:bg-gray-900 hover:text-white">Iniciar sesión</button>
+                            <button className="py-2 w-full block text-center bg-blue-700 text-slate-300 border rounded-xl 
+                            hover:scale-100 duration-300 hover:bg-blue-900 hover:text-white">Iniciar sesión</button>
                         </div>
                     </form>
 

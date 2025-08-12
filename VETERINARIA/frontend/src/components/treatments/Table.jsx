@@ -5,7 +5,10 @@ import ModalPayment from "./ModalPayment"
 import { Elements } from "@stripe/react-stripe-js"
 import { loadStripe } from "@stripe/stripe-js"
 import { useState } from "react"
-const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_KEY)
+
+const stripePromise = import.meta.env.VITE_STRIPE_KEY
+   ? loadStripe(import.meta.env.VITE_STRIPE_KEY)
+    : null
 
 const TableTreatments = ({ treatments, listPatient }) => {
     const { deleteTreatments } = storeTreatments()
@@ -17,7 +20,6 @@ const TableTreatments = ({ treatments, listPatient }) => {
         deleteTreatments(id);
         listPatient();
     }
-
 
     return (
         <>
@@ -73,7 +75,7 @@ const TableTreatments = ({ treatments, listPatient }) => {
                 </tbody>
             </table>
 
-            {modal === "payment" && selectedTreatment && (
+            {modal === "payment" && selectedTreatment && stripePromise &&  (
                 <Elements stripe={stripePromise}>
                     <ModalPayment treatment={selectedTreatment} />
                 </Elements>
