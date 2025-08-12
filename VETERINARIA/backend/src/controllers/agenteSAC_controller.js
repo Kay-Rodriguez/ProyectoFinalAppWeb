@@ -1,17 +1,19 @@
 import AgenteSAC from "../models/AgenteSAC.js"
 import Afiliado from "../models/AgenteSAC.js" 
-import { sendMailToOwner } from "../config/nodemailer.js"
+import sendMailToOwner from "../config/nodemailer.js"
 import { v2 as cloudinary } from 'cloudinary'
 import fs from "fs-extra"
 import mongoose from "mongoose"
 import { crearTokenJWT } from "../middlewares/JWT.js"
 
-const registrarAgenteSAC  = async(req,res)=>{
+/*const registrarAgenteSAC  = async(req,res)=>{
+
     //-----------------------1
     const {emailPropietario} = req.body
     if (Object.values(req.body).includes("")) return res.status(400).json({msg:"Lo sentimos, debes llenar todos los campos"})
     //-----------------------2
     const verificarEmailBDD = await AgenteSAC.findOne({emailPropietario})
+    
     console.log(verificarEmailBDD);
     
     if(verificarEmailBDD) return res.status(400).json({msg:"Lo sentimos, el email ya se encuentra registrado"})
@@ -53,13 +55,103 @@ const registrarAgenteSAC  = async(req,res)=>{
     await nuevoAgenteSAC.save()
     
     
-    await sendMailToOwner(emailPropietario,"VET"+password) //VET4FEE
+    await sendMailToOwner(emailPropietario,"VIDA"+password) //VET4FEE
     
     
     //-----------------------4
     res.status(201).json({msg:"Registro exitoso de la Contrato y correo enviado al propietario"})
 
-}
+}*/
+const registrarAgenteSAC = async (req, res) => {
+    try {
+        //-----------------------1
+        let { emailPropietario } = req.body;
+
+        // Normalizar email
+        if (emailPropietario) {
+            emailPropietario = emailPropietario.trim().toLowerCase();
+            req.body.emailPropietario = emailPropietario;
+        }
+
+        // Validar campos vacíos
+        if (Object.values(req.body).includes("")) {
+            return res.status(400).json({ msg: "Lo sentimos, debes llenar todos los campos" });
+        }
+
+        //-----------------------2 - Verificar duplicado
+        const verificarEmailBDD = await AgenteSAC.findOne({ emailPropietario });
+        if (verificarEmailBDD) {
+            return res.status(400).json({ msg: "Lo sentimos, el email ya se encuentra registrado" });
+        }
+
+        //-----------------------3 - Generar contraseña una sola vez
+        const passwordGenerada = "VIDA" + Math.random().toString(36).toUpperCase().slice(2, 5);
+
+        const nuevoAgenteSAC = new AgenteSAC({
+            ...req.body,
+            passwordPropietario: await AgenteSAC.prototype.encrypPassword(passwordGenerada),
+            administrador: req.administradorBDD?._id
+        });
+
+        //-----------------------4 - Imagen normal
+        if (req.files?.imagen) {
+            const { secure_url, public_id } = await cloudinary.uploader.upload(
+                req.files.imagen.tempFilePath,
+                { folder: 'agenteSACs' }
+            );
+            nuevoAgenteSAC.avatarContrato = secure_url;
+            nuevoAgenteSAC.avatarContratoID = public_id;
+            await fs.unlink(req.files.imagen.tempFilePath);
+        }
+
+        //-----------------------5 - Imagen IA
+        if (req.body?.avatarContratoIA) {
+            const base64Data = req.body.avatarContratoIA.replace(/^data:image\/\w+;base64,/, '');
+            const buffer = Buffer.from(base64Data, 'base64');
+            const { secure_url } = await new Promise((resolve, reject) => {
+                const stream = cloudinary.uploader.upload_stream(
+                    { folder: 'agenteSACs', resource_type: 'auto' },
+                    (error, response) => {
+                        if (error) reject(error);
+                        else resolve(response);
+                    }
+                );
+                stream.end(buffer);
+            });
+            nuevoAgenteSAC.avatarContratoIA = secure_url;
+        }
+
+        //-----------------------6 - Guardar en BD con manejo de error de duplicado
+        try {
+            await nuevoAgenteSAC.save();
+        } catch (error) {
+            if (error.code === 11000) {
+                return res.status(400).json({ msg: "Lo sentimos, el email ya se encuentra registrado" });
+            }
+            throw error;
+        }
+
+        //-----------------------7 - Enviar correo
+        let correoEnviado = false;
+        try {
+            await sendMailToOwner(emailPropietario, passwordGenerada);
+            correoEnviado = true;
+        } catch (error) {
+            console.error("Error al enviar el correo:", error);
+        }
+
+        //-----------------------8 - Respuesta final
+        if (correoEnviado) {
+            res.status(201).json({ msg: "Registro exitoso y correo enviado al propietario" });
+        } else {
+            res.status(201).json({ msg: "Registro exitoso, pero el correo no pudo enviarse" });
+        }
+
+    } catch (error) {
+        console.error("Error en registrarAgenteSAC:", error);
+        res.status(500).json({ msg: "Ocurrió un error en el registro" });
+    }
+};
 
 const listarAgentesSAC = async (req,res)=>{
     if (req.agenteSACBDD?.rol ==="agenteSAC"){

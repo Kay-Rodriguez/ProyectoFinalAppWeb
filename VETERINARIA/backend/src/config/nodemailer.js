@@ -57,12 +57,12 @@ const sendMailToOwner = async(userMail,password)=>{
     let info = await transporter.sendMail({
     from: 'soporte@vidanova.com',
     to: userMail,
-    subject: "Correo de bienvenida - Afiliado",
+    subject: "Correo de bienvenida - AgenteSAC",
     html: `
     <h1> 💙 VIDANOVA🎗 </h1>
     <hr>
     <p>Contraseña de acceso: ${password}</p>
-    <a href=${process.env.URL_BACKEND}login >Clic para iniciar sesión</a>
+    <a href=${process.env.URL_FRONTEND}login >Clic para iniciar sesión</a>
     <hr>
     <footer>El equipo de VidaNova te da la más cordial bienvenida.</footer>
     `

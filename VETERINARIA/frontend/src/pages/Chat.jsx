@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+/*import { useEffect, useState } from "react"
 import { useForm } from "react-hook-form"
 import { io } from 'socket.io-client'
 
@@ -94,4 +94,44 @@ const Chat = () => {
     )
 }
 
-export default Chat
+export default Chat*/
+import { useEffect, useRef } from 'react';
+
+export default function ChatBotpress() {
+  const mounted = useRef(false);
+
+  useEffect(() => {
+    if (mounted.current) return;
+    mounted.current = true;
+
+    // 1) script del webchat
+    const s1 = document.createElement('script');
+    s1.src = 'https://cdn.botpress.cloud/webchat/v3.2/inject.js';
+    s1.defer = true;
+    document.body.appendChild(s1);
+
+    // 2) script de configuración (cópialo EXACTO desde "Share > Embed code")
+    const s2 = document.createElement('script');
+    // 👉 Reemplaza esta URL por la tuya (la del segundo <script> que te da Botpress)
+    s2.src = 'https://files.bpcontent.cloud/2025/05/20/20250520201125-LAFMIU15.js';
+    s2.defer = true;
+    document.body.appendChild(s2);
+
+    // 3) abre automáticamente cuando esté listo
+    const onReady = () => window.botpress?.open?.();
+    window.botpress?.on?.('webchat:ready', onReady);
+
+    return () => {
+      try { window.botpress?.reset?.(); } catch (e) {}
+      window.botpress?.off?.('webchat:ready', onReady);
+      document.body.removeChild(s1);
+      document.body.removeChild(s2);
+    };
+  }, []);
+
+  return (
+    <div className="h-[75vh]">
+      <div id="webchat-container" style={{ position:'relative', width:'100%', height:'100%' }} />
+    </div>
+  );
+}

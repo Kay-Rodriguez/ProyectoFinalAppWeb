@@ -47,13 +47,12 @@ const registro = async (req, res) => {
         await nuevoAdministrador.save();
 
         return res.status(200).json({ msg: "Revisa tu correo electrónico para confirmar tu cuenta" });
+
     } catch (error) {
         console.log("ERROR REGISTRO:", error);
         return res.status(500).json({ msg: "Error al registrar usuario", error: error.message });
     }
 }
-
-
 
 const confirmarMail = async (req,res)=>{
     if(!(req.params.token)) return res.status(400).json({msg:"Lo sentimos, no se puede validar la cuenta"})
