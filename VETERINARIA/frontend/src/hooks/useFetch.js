@@ -28,5 +28,4 @@ function useFetch() {
     return { fetchDataBackend }
 }
 
-//comentario
 export default useFetch;
