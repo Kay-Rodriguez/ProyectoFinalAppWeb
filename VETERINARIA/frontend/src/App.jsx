@@ -27,6 +27,8 @@ import PrivateRouteWithRole from './routes/PrivateRouteWithRole';
 
 // ✅ Google OAuth
 import { GoogleOAuthProvider } from '@react-oauth/google';
+//chat
+import ChatBotpress from './pages/ChatBotpress';
 
 function App() {
   const { profile } = storeProfile();
@@ -60,9 +62,10 @@ function App() {
                   <Route path='listar' element={<List />} />
                   <Route path='visualizar/:id' element={<Details />} />
                   <Route path='crear' element={
-                    <PrivateRouteWithRole>
+                    <PrivateRouteWithRole allow={['administrador','agenteSAC']}>
                       <Create />
                     </PrivateRouteWithRole>
+
                   } />
                   <Route path='actualizar/:id' element={
                     <PrivateRouteWithRole>
@@ -70,6 +73,8 @@ function App() {
                     </PrivateRouteWithRole>
                   } />
                   <Route path="chat" element={<Chat />} />
+                  <Route path="chat" element={<ChatBotpress />} />
+
                 </Route>
               </Routes>
             </ProtectedRoute>

@@ -62,7 +62,7 @@ const sendMailToOwner = async(userMail,password)=>{
     <h1> 💙 VIDANOVA🎗 </h1>
     <hr>
     <p>Contraseña de acceso: ${password}</p>
-    <a href=${process.env.URL_BACKEND}login>Clic para iniciar sesión</a>
+    <a href=${process.env.URL_BACKEND}login >Clic para iniciar sesión</a>
     <hr>
     <footer>El equipo de VidaNova te da la más cordial bienvenida.</footer>
     `

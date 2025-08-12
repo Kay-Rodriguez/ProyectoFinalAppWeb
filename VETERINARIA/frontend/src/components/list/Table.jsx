@@ -35,7 +35,7 @@ const Table = () => {
                 }
             }
             const data ={
-                salidaMascota:new Date().toString()
+                salidaContrato:new Date().toString()
             }
             await fetchDataBackend(url, data, "DELETE", options.headers)
             setPatients((prevPatients) => prevPatients.filter(patient => patient._id !== id))

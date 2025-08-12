@@ -15,8 +15,6 @@ const CardPassword = () => {
             clearToken()
         }
     }
-
-
     return (
         <>
             <ToastContainer />

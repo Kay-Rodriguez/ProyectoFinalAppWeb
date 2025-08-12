@@ -84,5 +84,4 @@ const TableTreatments = ({ treatments, listPatient }) => {
     );
 };
 
-
 export default TableTreatments

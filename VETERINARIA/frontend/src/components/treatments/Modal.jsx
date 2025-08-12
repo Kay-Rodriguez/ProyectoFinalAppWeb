@@ -7,7 +7,7 @@ const ModalTreatments = ({patientID}) => {
     const { toggleModal, registerTreatments } = storeTreatments()
 
     const registerTreatmentsForm = (data) => {
-        const newData = { ...data, paciente: patientID }
+        const newData = { ...data, agenteSAC: patientID }
         registerTreatments(newData)
     }
 
