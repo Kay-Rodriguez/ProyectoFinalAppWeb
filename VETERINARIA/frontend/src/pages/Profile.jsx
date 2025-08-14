@@ -1,6 +1,6 @@
 
 import CardPassword from '../components/profile/CardPassword'
-import { CardProfile } from '../components/profile/CardProfile'
+import  CardProfile  from '../components/profile/CardProfile'
 import { CardProfileOwner } from '../components/profile/CardProfileOwner'
 import FormProfile from '../components/profile/FormProfile'
 import storeProfile from '../context/storeProfile'

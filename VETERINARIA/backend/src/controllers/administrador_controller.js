@@ -1,7 +1,11 @@
-import Administrador from "../models/Administrador.js"
-import {sendMailToRegister, sendMailToRecoveryPassword} from "../config/nodemailer.js"
-import { crearTokenJWT } from "../middlewares/JWT.js"
-import mongoose from "mongoose" 
+import Administrador from "../models/Administrador.js";
+import { sendMailToRegister, sendMailToRecoveryPassword } from "../config/nodemailer.js";
+import { crearTokenJWT } from "../middlewares/JWT.js";
+import mongoose from "mongoose";
+import { v2 as cloudinary } from "cloudinary";
+import fs from "fs-extra";
+
+
 /*
 const registro = async (req,res)=>{
     const {email,password} = req.body
@@ -195,6 +199,39 @@ const actualizarPassword = async (req,res)=>{
     res.status(200).json({msg:"Password actualizado correctamente"})
 }
 
+// ========== ACTUALIZAR AVATAR ==========
+const actualizarAvatar = async (req, res) => {
+  try {
+    // Si tu ruta viene con :id => usa req.params.id
+    const id = req.params.id || req.administradorBDD?._id;
+    const admin = await Administrador.findById(id);
+    if (!admin) return res.status(404).json({ msg: "Administrador no existe" });
+
+    // nombre del campo desde el front: 'avatar' (recomendado)
+    if (!req.files?.avatar) return res.status(400).json({ msg: 'Falta archivo "avatar"' });
+
+    // borra anterior si existe
+    if (admin.avatarId) {
+      try { await cloudinary.uploader.destroy(admin.avatarId); } catch (_) {}
+    }
+
+    const { secure_url, public_id } = await cloudinary.uploader.upload(
+      req.files.avatar.tempFilePath,
+      { folder: "admins" }
+    );
+
+    // limpia tmp
+    try { await fs.unlink(req.files.avatar.tempFilePath); } catch (_) {}
+
+    admin.avatarUrl = secure_url;
+    admin.avatarId = public_id;
+    await admin.save();
+
+    res.status(200).json({ msg: "Avatar actualizado", avatarUrl: admin.avatarUrl });
+  } catch (e) {
+    res.status(500).json({ msg: "Error al actualizar avatar", error: e.message });
+  }
+};
 export {
     registro,
     confirmarMail,
@@ -204,5 +241,6 @@ export {
     login,
     perfil, 
     actualizarPerfil,
-    actualizarPassword
+    actualizarPassword, 
+    actualizarAvatar
 }

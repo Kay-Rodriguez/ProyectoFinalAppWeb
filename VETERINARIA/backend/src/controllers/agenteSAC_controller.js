@@ -1,6 +1,6 @@
 import AgenteSAC from "../models/AgenteSAC.js"
-import Afiliado from "../models/AgenteSAC.js" 
-import sendMailToOwner from "../config/nodemailer.js"
+import Afiliado from "../models/Afiliado.js" 
+import { sendMailToOwner } from "../config/nodemailer.js"
 import { v2 as cloudinary } from 'cloudinary'
 import fs from "fs-extra"
 import mongoose from "mongoose"
